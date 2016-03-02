@@ -15,13 +15,19 @@ public class WallController : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
-		if (col != null)
-		if (col.CompareTag ("Molecule")) {
-			Destroy (col.gameObject);
-		}
-
+        if (col != null)
+        {
+            if (col.CompareTag("Molecule"))
+            {
+                Destroy(col.gameObject);
+                //GameObject.FindWithTag("GameController").SendMessage("HpUpdate", -0.05f);
+            }
+            if( col.CompareTag("Medicine"))
+            {
+                Destroy(col.gameObject);
+            }
+        }
 		//爆発効果
-
-		GameObject.FindWithTag ("GameController").SendMessage ("HpUpdate", -0.05f);
 	}
+
 }

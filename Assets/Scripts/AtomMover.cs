@@ -22,6 +22,7 @@ public class AtomMover : MonoBehaviour {
 	private string atomName;
 	private GameObject rayHitGameObject; //rayが当たったobject
 
+    private bool isExistUpper;
 	private bool isDrag;
 	Rigidbody2D rig;
 
@@ -53,6 +54,7 @@ public class AtomMover : MonoBehaviour {
 			
 		numConnectable=-1;
 		isDrag = false;
+        isExistUpper = true; //Wallよりも上にあるか　⇒　isTrigger==false;
 	}
 	
 	// Update is called once per frame
@@ -61,12 +63,19 @@ public class AtomMover : MonoBehaviour {
 			if (!isDrag) {
 				Vector2 vecA = gravityPointA.position - transform.position;
 				float distanceA = Vector2.SqrMagnitude (vecA);
-				if (rig.velocity.sqrMagnitude > 3)
-					rig.AddForce (speed*vecA / 30);
-				else
-					rig.AddForce (speed*vecA / 20);
+                if (rig != null)
+                {
+                    if (rig.velocity.sqrMagnitude > 3)
+                        rig.AddForce(speed * vecA / 30);
+                    else
+                        rig.AddForce(speed * vecA / 20);
+                }
 			}
 		}
+        if(gameObject.transform.position.y<-1.75f) //Wallよりも下にあれば
+        {
+            gameObject.GetComponent<CircleCollider2D>().isTrigger = true;
+        }
 		CheckConnection ();
 		CheckMolecule ();
 	}
@@ -148,10 +157,10 @@ public class AtomMover : MonoBehaviour {
 	private void CheckMolecule()
 	{
 		if (transform.childCount > 0) {
-			rig.gravityScale = 0.05f;
+			rig.gravityScale = 0.07f;
 			gameObject.tag="Molecule";
 			gameObject.layer=11; //Molecule
-			gameObject.GetComponent<CircleCollider2D>().isTrigger=true;
+			//gameObject.GetComponent<CircleCollider2D>().isTrigger=true;
 		}
 		if (transform.parent.tag == "Molecule" || transform.parent.tag == "Atom") {
 			gameObject.tag = "Molecule";
@@ -213,4 +222,9 @@ public class AtomMover : MonoBehaviour {
 	{
 		return isDrag;
 	}
+
+    public void setIsWallUpper(bool flag)
+    {
+        isExistUpper = flag;
+    }
 }
